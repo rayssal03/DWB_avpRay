@@ -5,15 +5,15 @@ const port = 3000;
 
 app.use(express.json());
 
-const alunos = [
-  { id: 1, nome: "Augusto", turma: "2TIB" },
-  { id: 2, nome: "Gustavo", turma: "2TIB" },
-  { id: 3, nome: "Rayssa", turma: "2TIB" },
-  { id: 4, nome: "Amanda", turma: "2TIB" },
-  { id: 5, nome: "Marcos", turma: "2TIB" },
-  { id: 6, nome: "Michelly", turma: "2TIB" },
-  { id: 7, nome: "Maria Fernanda", turma: "2TIB" },
-  { id: 8, nome: "Fellype", turma: "2TIB" }
+const livros = [
+  { id: 1, nome: "O Senhor dos Anéis ", gênero: "Fantasia" },
+  { id: 2, nome: "Um Conto de Duas Cidades", gênero: "Romance" },
+  { id: 3, nome: "O Pequeno Príncipe", gênero: "Literatura Infantil" },
+  { id: 4, nome: "E Não Sobrou Nenhum", gênero: "Suspense" },
+  { id: 5, nome: "O Diário de Anne Frank", gênero: "Biografia" },
+  { id: 6, nome: "A Divina Comédia", gênero: "Poesia" },
+  { id: 7, nome: "Duna", gênero: "Ficção Científica" },
+  { id: 8, nome: "Admirável Mundo Novo ", gênero: "Distopia" }
 ];
 
 app.get("/", (req, res) => {
@@ -24,36 +24,79 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/alunos", (req, res) => {
-  res.json(alunos);
+app.get("/livros", (req, res) => {
+  res.json(livros);
 });
 
-app.get("/alunos/:id", (req, res) => {
+app.get("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
 
-  const aluno = alunos.find((aluno) => aluno.id === id);
+  const livro = livros.find((livro) => livro.id === id);
 
-  if (!aluno) {
+  if (!livro) {
     return res.status(404).json({
-      message: "Aluno não encontrado"
+      message: "Livro não encontrado"
     });
   }
 
-  res.json(aluno);
+  res.json(livro );
 });
 
-app.post("/alunos", (req, res) => {
-  const novoAluno = {
-    id: alunos.length + 1,
+app.post("/livros", (req, res) => {
+  const novoLivro = {
+    id: livros.length + 1,
     nome: req.body.nome,
-    turma: req.body.turma
+    gênero: req.body.gênero
   };
 
-  alunos.push(novoAluno);
+  livros.push(novoLivro);
 
   res.status(201).json({
-    mensagem: "Aluno cadastrado com sucesso",
-    aluno: novoAluno
+    mensagem: "Livro cadastrado com sucesso",
+    livro: novoLivro
+  });
+});
+
+
+app.patch("/livros/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const { nome, gênero } = req.body;
+
+  const livro = livros.find((livro) => livro.id === id);
+
+  if (!livro) {
+    return res.status(404).json({
+      message: "Livro não encontrado"
+    });
+  }
+
+  if (nome) {
+    livro.nome = nome;
+  }
+
+  if (gênero) {
+    livro.gênero = gênero;
+  }
+
+
+  res.json(livro );
+});
+
+app.delete("/livros/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const livroIndex = livros.findIndex((livro) => livro.id === id);
+
+  if (livroIndex === -1) {
+    return res.status(404).json({
+      message: "Livro não encontrado"
+    });
+  }
+
+  livros.splice(livroIndex, 1);
+
+  res.json({
+    message: "Livro removido com sucesso"
   });
 });
 
