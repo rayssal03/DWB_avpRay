@@ -6,16 +6,19 @@ const port = 3000;
 app.use(express.json());
 
 const livros = [
-  { id: 1, nome: "O Senhor dos Anéis ", gênero: "Fantasia" },
+  { id: 1, nome: "O Senhor dos Anéis", gênero: "Fantasia" },
   { id: 2, nome: "Um Conto de Duas Cidades", gênero: "Romance" },
   { id: 3, nome: "O Pequeno Príncipe", gênero: "Literatura Infantil" },
   { id: 4, nome: "E Não Sobrou Nenhum", gênero: "Suspense" },
   { id: 5, nome: "O Diário de Anne Frank", gênero: "Biografia" },
   { id: 6, nome: "A Divina Comédia", gênero: "Poesia" },
   { id: 7, nome: "Duna", gênero: "Ficção Científica" },
-  { id: 8, nome: "Admirável Mundo Novo ", gênero: "Distopia" }
+  { id: 8, nome: "Admirável Mundo Novo", gênero: "Distopia" }
 ];
 
+let proximoId = 9;
+
+// Rota inicial
 app.get("/", (req, res) => {
   res.json({
     mensagem: "Servidor Express funcionando!",
@@ -24,10 +27,12 @@ app.get("/", (req, res) => {
   });
 });
 
+// LISTAR TODOS OS LIVROS
 app.get("/livros", (req, res) => {
   res.json(livros);
 });
 
+// CONSULTAR LIVRO POR ID
 app.get("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
 
@@ -35,18 +40,27 @@ app.get("/livros/:id", (req, res) => {
 
   if (!livro) {
     return res.status(404).json({
-      message: "Livro não encontrado"
+      mensagem: "Livro não encontrado"
     });
   }
 
-  res.json(livro );
+  res.json(livro);
 });
 
+// CADASTRAR LIVRO
 app.post("/livros", (req, res) => {
+  const { nome, gênero } = req.body;
+
+  if (!nome || !gênero) {
+    return res.status(400).json({
+      mensagem: "Nome e gênero são obrigatórios"
+    });
+  }
+
   const novoLivro = {
-    id: livros.length + 1,
-    nome: req.body.nome,
-    gênero: req.body.gênero
+    id: proximoId++,
+    nome,
+    gênero
   };
 
   livros.push(novoLivro);
@@ -57,8 +71,8 @@ app.post("/livros", (req, res) => {
   });
 });
 
-
-app.patch("/livros/:id", (req, res) => {
+// EDITAR LIVRO
+app.put("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
   const { nome, gênero } = req.body;
 
@@ -66,7 +80,7 @@ app.patch("/livros/:id", (req, res) => {
 
   if (!livro) {
     return res.status(404).json({
-      message: "Livro não encontrado"
+      mensagem: "Livro não encontrado"
     });
   }
 
@@ -78,10 +92,13 @@ app.patch("/livros/:id", (req, res) => {
     livro.gênero = gênero;
   }
 
-
-  res.json(livro );
+  res.json({
+    mensagem: "Livro atualizado com sucesso",
+    livro
+  });
 });
 
+// EXCLUIR LIVRO
 app.delete("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
 
@@ -89,17 +106,18 @@ app.delete("/livros/:id", (req, res) => {
 
   if (livroIndex === -1) {
     return res.status(404).json({
-      message: "Livro não encontrado"
+      mensagem: "Livro não encontrado"
     });
   }
 
   livros.splice(livroIndex, 1);
 
   res.json({
-    message: "Livro removido com sucesso"
+    mensagem: "Livro removido com sucesso"
   });
 });
 
+// INICIAR SERVIDOR
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
