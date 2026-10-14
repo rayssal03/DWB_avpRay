@@ -5,16 +5,6 @@ const port = 3000;
 
 app.use(express.json());
 
-const livros = [
-  { id: 1, nome: "O Senhor dos Anéis", gênero: "Fantasia" },
-  { id: 2, nome: "Um Conto de Duas Cidades", gênero: "Romance" },
-  { id: 3, nome: "O Pequeno Príncipe", gênero: "Literatura Infantil" },
-  { id: 4, nome: "E Não Sobrou Nenhum", gênero: "Suspense" },
-  { id: 5, nome: "O Diário de Anne Frank", gênero: "Biografia" },
-  { id: 6, nome: "A Divina Comédia", gênero: "Poesia" },
-  { id: 7, nome: "Duna", gênero: "Ficção Científica" },
-  { id: 8, nome: "Admirável Mundo Novo", gênero: "Distopia" }
-];
 
 let proximoId = 9;
 
@@ -121,3 +111,49 @@ app.delete("/livros/:id", (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Livros",
+      version: "1.0.0",
+      description: "API para gerenciamento de livros"
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Servidor local"
+      }
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          description: "Informe o token no formato: Bearer SEU_TOKEN"
+        }
+      }
+    }
+  },
+  apis: ["./server.js"]
+};
+
+/**
+* @swagger
+* /alunos:
+* get:
+* summary: Lista todos os alunos
+* description: Retorna a lista de alunos cadastrados no sistema.
+* tags:
+* - Alunos
+* responses:
+* 200:
+* description: Lista de alunos retornada com sucesso
+* content:
+* application/json:
+* example:
+* - id: 1
+* nome: Ana Souza
+* turma: 2º TI
+*/
