@@ -1,4 +1,9 @@
 import express from "express";
+import "dotenv/config";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./src/config/swagger.js";
+import livrosRoutes from "./src/routes/livrosRoutes.js";
+import prisma from "./src/config/prisma.js";
 
 const app = express();
 const port = 3000;
@@ -8,7 +13,6 @@ app.use(express.json());
 
 let proximoId = 9;
 
-// Rota inicial
 app.get("/", (req, res) => {
   res.json({
     mensagem: "Servidor Express funcionando!",
@@ -138,6 +142,20 @@ const swaggerOptions = {
   },
   apis: ["./server.js"]
 };
+
+try {
+  await prisma.$connect();
+  console.log("Conetado ao banco de dados.");
+
+  app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
+  });
+} catch (error) {
+  console.error("Erro ao conectar ao banco de dados:", error.message);
+
+  await prisma.$disconnect();
+  process.exitCode = 1;
+}
 
 /**
 * @swagger
