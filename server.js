@@ -1,9 +1,5 @@
 import express from "express";
-import "dotenv/config";
-import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./src/config/swagger.js";
-import livrosRoutes from "./src/routes/livrosRoutes.js";
-import prisma from "./src/config/prisma.js";
+import livros from "./src/data/livros.js";
 
 const app = express();
 const port = 3000;
@@ -115,63 +111,3 @@ app.delete("/livros/:id", (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
-
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Livros",
-      version: "1.0.0",
-      description: "API para gerenciamento de livros"
-    },
-    servers: [
-      {
-        url: "http://localhost:3000",
-        description: "Servidor local"
-      }
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          description: "Informe o token no formato: Bearer SEU_TOKEN"
-        }
-      }
-    }
-  },
-  apis: ["./server.js"]
-};
-
-try {
-  await prisma.$connect();
-  console.log("Conetado ao banco de dados.");
-
-  app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`);
-  });
-} catch (error) {
-  console.error("Erro ao conectar ao banco de dados:", error.message);
-
-  await prisma.$disconnect();
-  process.exitCode = 1;
-}
-
-/**
-* @swagger
-* /alunos:
-* get:
-* summary: Lista todos os alunos
-* description: Retorna a lista de alunos cadastrados no sistema.
-* tags:
-* - Alunos
-* responses:
-* 200:
-* description: Lista de alunos retornada com sucesso
-* content:
-* application/json:
-* example:
-* - id: 1
-* nome: Ana Souza
-* turma: 2º TI
-*/

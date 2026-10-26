@@ -8,3 +8,5 @@ const livros = [
   { id: 7, nome: "Duna", gênero: "Ficção Científica" },
   { id: 8, nome: "Admirável Mundo Novo", gênero: "Distopia" }
 ];
+
+export default livros;
