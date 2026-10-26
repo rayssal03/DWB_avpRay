@@ -16,3 +16,11 @@ export function listarLivros() {
     }
   });
 }
+  
+export function listarLivroPorId(id) {
+  return prisma.livro.findUnique({
+    where: {
+      id
+    }
+  });
+}
